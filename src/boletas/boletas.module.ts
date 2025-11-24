@@ -7,10 +7,7 @@ import { DetalleBoleta } from '../entities/detalle-boleta.entity';
 import { Producto } from '../entities/producto.entity';
 
 @Module({
-  // AQUÍ registras las entidades que usas en el Service
-  imports: [
-    TypeOrmModule.forFeature([Boleta, DetalleBoleta, Producto])
-  ],
+  imports: [TypeOrmModule.forFeature([Boleta, DetalleBoleta, Producto])],
   controllers: [BoletasController],
   providers: [BoletasService],
 })
