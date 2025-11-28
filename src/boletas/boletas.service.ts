@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Boleta } from '../entities/boleta.entity';
@@ -21,8 +25,10 @@ export class BoletasService {
 
     for (const item of dto.detalles) {
       const producto = await this.prodRepo.findOneBy({ id: item.productoId });
-      if (!producto) throw new NotFoundException(`Producto ${item.productoId} no existe`);
-      if (producto.stock < item.cantidad) throw new BadRequestException(`Sin stock para ${producto.nombre}`);
+      if (!producto)
+        throw new NotFoundException(`Producto ${item.productoId} no existe`);
+      if (producto.stock < item.cantidad)
+        throw new BadRequestException(`Sin stock para ${producto.nombre}`);
 
       const detalle = new DetalleBoleta();
       detalle.producto = producto;
@@ -42,6 +48,8 @@ export class BoletasService {
   }
 
   findAll() {
-    return this.boletaRepo.find({ relations: ['usuario', 'detalles', 'detalles.producto'] });
+    return this.boletaRepo.find({
+      relations: ['usuario', 'detalles', 'detalles.producto'],
+    });
   }
 }

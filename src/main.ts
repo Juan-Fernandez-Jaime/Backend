@@ -10,7 +10,9 @@ async function bootstrap() {
   app.setGlobalPrefix('api'); // ⬅️ ¡ESTA LÍNEA ES LA QUE TE FALTA!
 
   app.enableCors();
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('API Maleta Didáctica')
@@ -22,6 +24,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); // Swagger estará en localhost:3000/api
 
-  await app.listen(3000);
+  await app.listen(4000);
 }
 bootstrap();

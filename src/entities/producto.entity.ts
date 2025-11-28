@@ -6,5 +6,4 @@ export class Producto {
   @Column() nombre: string;
   @Column('decimal') precio: number;
   @Column('int') stock: number;
-  // Puedes agregar relación con Categoria si lo deseas
 }

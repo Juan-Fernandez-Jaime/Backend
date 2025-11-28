@@ -42,7 +42,9 @@ export class ProductosService {
   async remove(id: number): Promise<void> {
     const resultado = await this.productoRepository.delete(id);
     if (resultado.affected === 0) {
-      throw new NotFoundException(`No se pudo eliminar: El producto con ID ${id} no existe`);
+      throw new NotFoundException(
+        `No se pudo eliminar: El producto con ID ${id} no existe`,
+      );
     }
   }
 }

@@ -7,7 +7,7 @@ import { Producto } from '../entities/producto.entity';
 @Module({
   imports: [
     // Registramos la entidad Producto para poder inyectar el Repository en el Service
-    TypeOrmModule.forFeature([Producto])
+    TypeOrmModule.forFeature([Producto]),
   ],
   controllers: [ProductosController],
   providers: [ProductosService],

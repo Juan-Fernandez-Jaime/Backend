@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, OneToMany, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  ManyToOne,
+  OneToMany,
+  Column,
+} from 'typeorm';
 import { Usuario } from './usuario.entity';
 import { DetalleBoleta } from './detalle-boleta.entity';
 
@@ -8,5 +15,6 @@ export class Boleta {
   @CreateDateColumn() fecha: Date;
   @Column('decimal', { default: 0 }) total: number;
   @ManyToOne(() => Usuario, (u) => u.boletas) usuario: Usuario;
-  @OneToMany(() => DetalleBoleta, (d) => d.boleta, { cascade: true }) detalles: DetalleBoleta[];
+  @OneToMany(() => DetalleBoleta, (d) => d.boleta, { cascade: true })
+  detalles: DetalleBoleta[];
 }
