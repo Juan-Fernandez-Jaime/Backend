@@ -6,7 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { BoletasModule } from './boletas/boletas.module';
 import { ProductosModule } from './productos/productos.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
-
+import { SeedModule } from './seed/seed.module';
 // Entidades (Solo las que tienen datos)
 import { Usuario } from './entities/usuario.entity';
 import { Producto } from './entities/producto.entity';
@@ -34,6 +34,7 @@ import { DetalleBoleta } from './entities/detalle-boleta.entity';
     BoletasModule,
     ProductosModule,
     UsuariosModule,
+    SeedModule,
   ],
 })
 export class AppModule {}

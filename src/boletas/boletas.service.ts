@@ -4,7 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+// 👇 ¡ESTA ES LA LÍNEA IMPORTANTE!
+import { Repository, Between } from 'typeorm';
 import { Boleta } from '../entities/boleta.entity';
 import { Producto } from '../entities/producto.entity';
 import { DetalleBoleta } from '../entities/detalle-boleta.entity';
@@ -19,7 +20,7 @@ export class BoletasService {
 
   async create(dto: CreateBoletaDto, usuario: any) {
     const nuevaBoleta = new Boleta();
-    nuevaBoleta.usuario = usuario; // Asociar al usuario del Token
+    nuevaBoleta.usuario = usuario;
     nuevaBoleta.detalles = [];
     let total = 0;
 
@@ -38,7 +39,6 @@ export class BoletasService {
       nuevaBoleta.detalles.push(detalle);
       total += detalle.subtotal;
 
-      // Descontar Stock
       producto.stock -= item.cantidad;
       await this.prodRepo.save(producto);
     }
@@ -50,6 +50,24 @@ export class BoletasService {
   findAll() {
     return this.boletaRepo.find({
       relations: ['usuario', 'detalles', 'detalles.producto'],
+      order: { fecha: 'DESC' },
+    });
+  }
+
+  // EL MÉTODO QUE AGREGASTE
+  findDaily() {
+    const inicioHoy = new Date();
+    inicioHoy.setHours(0, 0, 0, 0);
+
+    const finHoy = new Date();
+    finHoy.setHours(23, 59, 59, 999);
+
+    return this.boletaRepo.find({
+      where: {
+        fecha: Between(inicioHoy, finHoy), // Si Between no se importó arriba, aquí falla.
+      },
+      relations: ['usuario', 'detalles', 'detalles.producto'],
+      order: { fecha: 'DESC' },
     });
   }
 }
