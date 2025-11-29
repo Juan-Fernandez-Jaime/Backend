@@ -10,9 +10,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api'); // ⬅️ ¡ESTA LÍNEA ES LA QUE TE FALTA!
 
   app.enableCors();
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-  );
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
 
   const config = new DocumentBuilder()
     .setTitle('API Maleta Didáctica')
