@@ -1,4 +1,4 @@
-import { IsArray, IsInt, IsPositive, ValidateNested } from 'class-validator';
+import { IsArray, IsInt, IsPositive, ValidateNested, IsString } from 'class-validator'; // Agrega IsString
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -13,4 +13,9 @@ export class CreateBoletaDto {
   @ValidateNested({ each: true })
   @Type(() => DetalleDto)
   detalles: DetalleDto[];
+
+  // 2. NUEVO CAMPO EN EL DTO
+  @ApiProperty({ example: 'EFECTIVO' })
+  @IsString()
+  metodoPago: string;
 }
