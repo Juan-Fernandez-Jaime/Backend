@@ -26,6 +26,9 @@ describe('ProductosService', () => {
 
     service = module.get<ProductosService>(ProductosService);
     repo = module.get(getRepositoryToken(Producto));
+
+
+    jest.clearAllMocks();
   });
 
   it('findAll debería devolver un array de productos', async () => {
@@ -42,13 +45,31 @@ describe('ProductosService', () => {
     expect(await service.create(dto)).toEqual({ id: 1, ...dto });
   });
 
+
+
   it('remove debería eliminar un producto existente', async () => {
+
+    repo.findOneBy.mockResolvedValue({ id: 1, nombre: 'Producto Existente' });
+
+    // 2. Simulamos que el delete funciona
     repo.delete.mockResolvedValue({ affected: 1 });
+
+    // 3. Verificamos que no lance error
     await expect(service.remove(1)).resolves.not.toThrow();
+
+
+    expect(repo.findOneBy).toHaveBeenCalledWith({ id: 1 });
+    expect(repo.delete).toHaveBeenCalledWith(1);
   });
 
   it('remove debería fallar si el producto no existe', async () => {
-    repo.delete.mockResolvedValue({ affected: 0 });
+
+    repo.findOneBy.mockResolvedValue(null);
+
+
     await expect(service.remove(999)).rejects.toThrow(NotFoundException);
+
+
+    expect(repo.delete).not.toHaveBeenCalled();
   });
 });

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsuariosService } from './usuarios.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Usuario } from '../entities/usuario.entity';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 
 describe('UsuariosService', () => {
   let service: UsuariosService;
@@ -25,6 +26,8 @@ describe('UsuariosService', () => {
 
     service = module.get<UsuariosService>(UsuariosService);
     repo = module.get(getRepositoryToken(Usuario));
+
+    jest.clearAllMocks();
   });
 
   it('findAll debería devolver usuarios', async () => {
@@ -33,7 +36,7 @@ describe('UsuariosService', () => {
     expect(await service.findAll()).toEqual(users);
   });
 
-  it('update debería modificar un usuario', async () => {
+  it('update debería modificar un usuario exitosamente', async () => {
     const user = { id: 1, nombre: 'Juan' };
     const changes = { nombre: 'Juan Actualizado' };
 
@@ -42,5 +45,43 @@ describe('UsuariosService', () => {
 
     const result = await service.update(1, changes);
     expect(result.nombre).toBe('Juan Actualizado');
+    expect(repo.merge).toHaveBeenCalledWith(user, changes);
   });
+
+  it('update debería lanzar ConflictException si el email ya existe', async () => {
+    const user = { id: 1, nombre: 'Juan', email: 'juan@test.com' };
+
+    repo.findOneBy.mockResolvedValue(user);
+
+    const errorDuplicado: any = new Error('Duplicate entry');
+    errorDuplicado.errno = 1062;
+    repo.save.mockRejectedValue(errorDuplicado);
+
+    await expect(service.update(1, { email: 'existente@test.com' }))
+      .rejects.toThrow(ConflictException);
+  });
+
+  it('update debería lanzar NotFoundException si el usuario no existe', async () => {
+    repo.findOneBy.mockResolvedValue(null);
+    await expect(service.update(99, { nombre: 'Nadie' }))
+      .rejects.toThrow(NotFoundException);
+  });
+
+  it('remove debería eliminar un usuario correctamente', async () => {
+    repo.delete.mockResolvedValue({ affected: 1 });
+    const result = await service.remove(1);
+    expect(result).toEqual({ message: 'Usuario eliminado correctamente' });
+  });
+
+  // --- NUEVO TEST AGREGADO ---
+  it('remove debería lanzar ConflictException si el usuario tiene ventas asociadas', async () => {
+    // Simulamos el error de llave foránea de MySQL (1451)
+    const errorReferencia: any = new Error('Foreign key constraint failed');
+    errorReferencia.errno = 1451;
+
+    repo.delete.mockRejectedValue(errorReferencia);
+
+    await expect(service.remove(1)).rejects.toThrow(ConflictException);
+  });
+  // ---------------------------
 });
